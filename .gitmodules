@@ -1,0 +1,3 @@
+[submodule "src/synkar_robot_description"]
+	path = src/synkar_robot_description
+	url = https://github.com/Grupo-B-SynkarSummerCamp/synkar_robot_description.git
