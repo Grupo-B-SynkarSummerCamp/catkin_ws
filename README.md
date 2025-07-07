@@ -89,19 +89,32 @@ source devel/setup.bash
 
 ---
 
-## Contribuição
+## Executando no Hardware Real
 
-1. Fork este repositório.
-2. Crie uma _branch_ com sua feature:
+Para usar o repositório com o robô Syncar de verdade, siga os passos abaixo:
+
+
+1. No robô, inicie o ROS Master:
    ```bash
-   git checkout -b feature/nova-funcionalidade
+   roscore
    ```
-3. Faça _commit_ das alterações:
+2. Configure sua máquina para comunicação com o robô (em rede):
    ```bash
-   git commit -m "Descrição da funcionalidade"
+   rosrun rosserial_python serial_node.py _port:=tcp
    ```
-4. Envie para o repositório remoto:
+3. No computador host, dentro do workspace, execute o source:
    ```bash
-   git push origin feature/nova-funcionalidade
+   source devel/setup.bash
    ```
-5. Abra um Pull Request.
+4. Conecte ao robô e lance os nós de hardware:
+   ```bash
+   roslaunch synkar_robot_bringup bringup.launch
+   ```
+5. Para controle remoto via teleop:
+   ```bash
+   rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+   ```
+6. Para visualizar as informações da câmera RealSense no RVIZ:
+   ```bash
+   rviz
+   ```
