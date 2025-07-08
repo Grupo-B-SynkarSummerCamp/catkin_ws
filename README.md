@@ -16,7 +16,8 @@ Este repositório contém o workspace ROS (catkin) para a simulação do Robô S
 
 Antes de usar este workspace, certifique-se de ter instalado:
 
-1. **ROS Noetic**Siga o guia oficial:
+1. **ROS Noetic**
+   Siga o guia oficial:
    ```bash
    # configuração das chaves e repositórios
    sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
@@ -24,14 +25,20 @@ Antes de usar este workspace, certifique-se de ter instalado:
    sudo apt update
    sudo apt install ros-noetic-desktop-full
    ```
-2. **Pacote de teleop**Para controle via teclado:
+3. **Pacote de teleop**
+   Para controle via teclado:
    ```bash
    sudo apt install ros-noetic-teleop-twist-keyboard
    ```
-3. **Pacote RealSense**
+4. **Pacote RealSense**
    Para visualização da câmera Intel RealSense:
    ```bash
    sudo apt install ros-noetic-realsense2-*
+   ```
+5. **Baixe o teleop joy**
+6. **Baixe o py evdev**
+   ```
+   sudo apt install python3-evdev
    ```
 
 ---
