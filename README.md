@@ -144,6 +144,112 @@ Para ser controlado via joystick serial é necessário criar um novo nó. Siga o
    ~$ mkdir launch config scripts
 
    continua...
+
+
+   ---
+   ##Acesso as cameras##
+
+   🧠 Pré-requisitos
+
+    Ubuntu 20.04
+
+    ROS Noetic corretamente instalado
+
+    A câmera RealSense conectada via USB
+
+    Terminal com internet
+
+   🔧 1. Corrigir repositórios da Intel RealSense
+      a) Remover entradas duplicadas ou antigas
+      
+      Abra o arquivo principal:
+      
+      sudo nano /etc/apt/sources.list
+      
+      🔍 Procure e remova qualquer linha que contenha:
+      
+      http://realsense.intel.com/Debian/apt-repo
+      
+      💾 Salve com Ctrl + O, tecle Enter, e feche com Ctrl + X.
+      b) Corrigir o repositório correto
+      
+      Edite o arquivo do repositório da RealSense:
+      
+      sudo nano /etc/apt/sources.list.d/realsense-public.list
+      
+      🧼 Apague tudo e insira apenas esta linha:
+      
+      deb https://librealsense.intel.com/Debian/apt-repo focal main
+      
+      💾 Salve e feche como antes.
+      c) Adicionar a chave pública oficial da Intel
+      
+      curl -sSf https://librealsense.intel.com/Debian/librealsense.public.key | sudo apt-key add -
+      
+   🔄 2. Atualizar e instalar pacotes
+      
+      sudo apt update
+      sudo apt install librealsense2-dkms librealsense2-utils librealsense2-dev
+      sudo apt install ros-noetic-realsense2-camera
+      
+   🧪 3. Testar a câmera sem ROS (modo direto)
+      
+      Com a câmera conectada, digite:
+      
+      realsense-viewer
+      
+          Você deve ver vídeo ao vivo e sensor de profundidade. Se isso funcionar, a câmera está OK via USB.
+      
+   🤖 4. Rodar no ROS (com rs_camera.launch)
+      a) Inicie o ROS core:
+      
+      roscore
+      
+      Abra outro terminal.
+      b) Execute o driver da câmera:
+      
+      roslaunch realsense2_camera rs_camera.launch
+      
+      💡 Isso inicia os tópicos com vídeo, profundidade, infravermelho, etc.
+      🖼 5. Visualizar no rqt_image_view
+      
+      Em novo terminal:
+      
+      rqt_image_view
+      
+      Clique no menu suspenso e selecione:
+      
+          /camera/color/image_raw → imagem da câmera RGB
+      
+          /camera/depth/image_rect_raw → imagem de profundidade
+      
+   🌐 6. Visualizar no RViz
+      
+      Em novo terminal:
+      
+      rviz
+      
+      No painel esquerdo:
+      
+          Clique em "Add"
+      
+          Selecione "Image"
+      
+          No campo "Image Topic", selecione /camera/color/image_raw
+      
+      Você verá a imagem da câmera dentro do RViz.
+   🚪 7. Como fechar o RViz corretamente
+      
+      Se você abriu o rviz e ele não liberou o terminal, pode encerrá-lo com segurança:
+      Se estiver travado:
+      
+          Use Ctrl + C no terminal que o lançou
+      
+          Se não sair:
+      
+          pkill rviz
+      
+      💡 Isso força o fechamento sem comprometer o ROS.
    
 
 
