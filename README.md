@@ -125,3 +125,27 @@ Para usar o repositório com o robô Syncar de verdade, siga os passos abaixo:
    ```bash
    rviz
    ```
+
+
+---
+
+## Controle via Joystick (Controle Xbox)
+
+Para ser controlado via joystick serial é necessário criar um novo nó. Siga os passos abaixo
+
+1. Crie o pacote "**controle**"
+   ```bash
+   ~$ cd ~/catkin_ws/src
+   ~$ catkin_create_pkg controle rospy std_msgs sensor_msgs joy teleop_twist_joy
+   ```
+2. Estrutura de pastas
+   ```bash
+   ~$ cd ~/catkin_ws/src/controle
+   ~$ mkdir launch config scripts
+
+   continua...
+   
+
+
+
+
