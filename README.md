@@ -131,7 +131,7 @@ Para usar o repositório com o robô Syncar de verdade, siga os passos abaixo:
 
 ## Controle via Joystick (Controle Xbox)
 
-Para ser controlado via joystick serial é necessário criar um novo nó. Siga os passos abaixo
+Para controlar o robô via joystick serial é necessário criar um novo nó. Siga os passos abaixo:
 
 1. Crie o pacote "**controle**"
    ```bash
@@ -148,109 +148,118 @@ Para ser controlado via joystick serial é necessário criar um novo nó. Siga o
 
    ---
    
-## Acesso as cameras
+## Acessando a câmera D435
 
-   🧠 Pré-requisitos
+   Esses processos foram realizados no:
 
-    Ubuntu 20.04
+      Ubuntu 20.04
 
-    ROS Noetic corretamente instalado
+      ROS Noetic
 
-    A câmera RealSense conectada via USB
+      A câmera RealSense conectada via USB
 
-    Terminal com internet
+      Terminal com internet
 
-   🔧 1. Corrigir repositórios da Intel RealSense
-      a) Remover entradas duplicadas ou antigas
-      
+   1. Corrigir repositórios da Intel RealSense
+
+      Remover entradas duplicadas ou antigas
+
       Abra o arquivo principal:
-      
-      sudo nano /etc/apt/sources.list
-      
-      🔍 Procure e remova qualquer linha que contenha:
+      ```bash
+      ~$ sudo nano /etc/apt/sources.list
+      ```
+   2. Procure e comente qualquer linha que contenha:
       
       http://realsense.intel.com/Debian/apt-repo
       
-      💾 Salve com Ctrl + O, tecle Enter, e feche com Ctrl + X.
-      b) Corrigir o repositório correto
+      **Salve com Ctrl + O, tecle Enter, e feche com Ctrl + X.**
       
-      Edite o arquivo do repositório da RealSense:
+   3. Edite o arquivo do repositório da RealSense:
+      ```bash
+      ~$ sudo nano /etc/apt/sources.list.d/realsense-public.list
+      ```
+      - Apague tudo e insira apenas esta linha:
       
-      sudo nano /etc/apt/sources.list.d/realsense-public.list
+         deb https://librealsense.intel.com/Debian/apt-repo focal main
+        
+      **Salve com Ctrl + O, tecle Enter, e feche com Ctrl + X.**
       
-      🧼 Apague tudo e insira apenas esta linha:
+   4. Adicionar a chave pública oficial da Intel
+      ```bash
+      ~$ curl -sSf https://librealsense.intel.com/Debian/librealsense.public.key | sudo apt-key add -
+      ```
+   5. Atualizar e instalar pacotes
+      ```bash
+      ~$ sudo apt update
+      ~$ sudo apt install librealsense2-dkms librealsense2-utils librealsense2-dev
+      ~$ sudo apt install ros-noetic-realsense2-camera
+      ```
       
-      deb https://librealsense.intel.com/Debian/apt-repo focal main
-      
-      💾 Salve e feche como antes.
-      c) Adicionar a chave pública oficial da Intel
-      
-      curl -sSf https://librealsense.intel.com/Debian/librealsense.public.key | sudo apt-key add -
-      
-   🔄 2. Atualizar e instalar pacotes
-      
-      sudo apt update
-      sudo apt install librealsense2-dkms librealsense2-utils librealsense2-dev
-      sudo apt install ros-noetic-realsense2-camera
-      
-   🧪 3. Testar a câmera sem ROS (modo direto)
-      
-      Com a câmera conectada, digite:
-      
-      realsense-viewer
-      
-          Você deve ver vídeo ao vivo e sensor de profundidade. Se isso funcionar, a câmera está OK via USB.
-      
-   🤖 4. Rodar no ROS (com rs_camera.launch)
-      a) Inicie o ROS core:
-      
-      roscore
-      
-      Abra outro terminal.
-      b) Execute o driver da câmera:
-      
-      roslaunch realsense2_camera rs_camera.launch
-      
-      💡 Isso inicia os tópicos com vídeo, profundidade, infravermelho, etc.
-      🖼 5. Visualizar no rqt_image_view
-      
-      Em novo terminal:
-      
-      rqt_image_view
-      
+   6. Testar a câmera sem ROS (modo direto)
+      - Com a câmera conectada, digite:
+      ```bash
+      ~$ realsense-viewer
+
+      Você deve ver vídeo ao vivo e sensor de profundidade. Se isso funcionar, a câmera está OK via USB.
+
+   **7.0 A partir daqui, o source é necessário em cada terminal novo que será rodado as funções do ROS**
+      ```bash
+      ~$ cd catkin_ws
+      ~$ source devel/setup.bash
+      ```      
+   8. Rodar no ROS (com rs_camera.launch)
+      - Inicie o ROS core:
+      ```bash
+      ~$ roscore
+      ```      
+      - Abra outro terminal e execute o driver da câmera:
+      ```bash
+      ~$ roslaunch realsense2_camera rs_camera.launch
+      ```      
+      **- Isso inicia os tópicos com vídeo, profundidade, infravermelho, etc.**
+   
+   9. Visualizar no rqt_image_view:
+      - Em novo terminal:
+      ```bash
+      ~$ rqt_image_view
+      ```
       Clique no menu suspenso e selecione:
       
-          /camera/color/image_raw → imagem da câmera RGB
+      camera/color/image_raw → imagem da câmera RGB      
+      camera/depth/image_rect_raw → imagem de profundidade
+
+      Existem outras opções de imagens
       
-          /camera/depth/image_rect_raw → imagem de profundidade
+   9. Visualizar no RViz
+      - Em novo terminal:
+      ```bash
+      ~$ rviz
+      ```
       
-   🌐 6. Visualizar no RViz
+      - No painel esquerdo:
       
-      Em novo terminal:
+      **Clique em "Add"**
       
-      rviz
+      **Selecione "Image"**
       
-      No painel esquerdo:
-      
-          Clique em "Add"
-      
-          Selecione "Image"
-      
-          No campo "Image Topic", selecione /camera/color/image_raw
+      **No campo "Image Topic", selecione: camera --> color --> image_raw --> Ok**
       
       Você verá a imagem da câmera dentro do RViz.
-   🚪 7. Como fechar o RViz corretamente
+
+   10. Como fechar o RViz corretamente
       
-      Se você abriu o rviz e ele não liberou o terminal, pode encerrá-lo com segurança:
+      Ao iniciar o RViz duas abas irão se abrir, uma é o ambiente grafico do RViz e a outra é um aviso do fim de suporte do ROS.
+      Se você tentar rodar o RViz sem fechar ou dar "ok" nessa aba em alguns casos pode crashar.
+      Se você tentou fechar o rviz e ele não liberou o terminal, pode encerrá-lo com segurança (as vezes isso pode acontecer por causa da aba do aviso):
       Se estiver travado:
       
-          Use Ctrl + C no terminal que o lançou
+      Use Ctrl + C no terminal que o lançou
       
-          Se não sair:
+      Se não sair, abra outro terminal e digite:
+      ```bash
+      ~$ pkill rviz
       
-          pkill rviz
-      
-      💡 Isso força o fechamento sem comprometer o ROS.
+      Isso força o fechamento sem comprometer o ROS.
    
 
 
