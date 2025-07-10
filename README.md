@@ -160,7 +160,20 @@ Para controlar o robô via joystick serial é necessário criar um novo nó. Sig
 
       Terminal com internet
 
-   1. Corrigir repositórios da Intel RealSense
+   1. Conecte a camera do robo via serial e verifique se ela foi reconhecida pelo sitema
+      ```bash
+      ~$ lsusb
+      ```
+      Você deve ver algo como:
+      "Bus 002 Device 004: ID 8086:0b07 Intel Corp. Intel(R) RealSense(TM) Depth Camera"
+
+   2. Para verificar os dispositivos criados:
+      ```bash
+      ls /dev/video*
+      ```
+      Você verá /dev/video0, /dev/video1, etc. (a D435 pode criar múltiplos dispositivos para RGB e IR).
+
+   3. Corrigir repositórios da Intel RealSense
 
       Remover entradas duplicadas ou antigas
 
@@ -168,13 +181,13 @@ Para controlar o robô via joystick serial é necessário criar um novo nó. Sig
       ```bash
       ~$ sudo nano /etc/apt/sources.list
       ```
-   2. Procure e comente qualquer linha que contenha:
+   4. Procure e comente qualquer linha que contenha:
       
       http://realsense.intel.com/Debian/apt-repo
       
       **Salve com Ctrl + O, tecle Enter, e feche com Ctrl + X.**
       
-   3. Edite o arquivo do repositório da RealSense:
+   5. Edite o arquivo do repositório da RealSense:
       ```bash
       ~$ sudo nano /etc/apt/sources.list.d/realsense-public.list
       ```
@@ -184,30 +197,36 @@ Para controlar o robô via joystick serial é necessário criar um novo nó. Sig
         
       **Salve com Ctrl + O, tecle Enter, e feche com Ctrl + X.**
       
-   4. Adicionar a chave pública oficial da Intel
+   6. Adicionar a chave pública oficial da Intel
       ```bash
       ~$ curl -sSf https://librealsense.intel.com/Debian/librealsense.public.key | sudo apt-key add -
       ```
-   5. Atualizar e instalar pacotes
+   7. Atualizar e instalar pacotes
       ```bash
       ~$ sudo apt update
       ~$ sudo apt install librealsense2-dkms librealsense2-utils librealsense2-dev
       ~$ sudo apt install ros-noetic-realsense2-camera
       ```
-      
-   6. Testar a câmera sem ROS (modo direto)
+   8. Instalando os drivers
+      ```bash
+      ~$ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key F6B0FC61
+      ~$ sudo add-apt-repository "deb http://realsense-hw-public.s3.amazonaws.com/Debian/apt-repo $(lsb_release -cs) main"
+      ~$ sudo apt update
+      ~$ sudo apt install librealsense2-dkms librealsense2-utils librealsense2-dev librealsense2-dbg7
+      ```      
+   9. Testar a câmera sem ROS (modo direto)
       - Com a câmera conectada, digite:
       ```bash
       ~$ realsense-viewer
 
       Você deve ver vídeo ao vivo e sensor de profundidade. Se isso funcionar, a câmera está OK via USB.
 
-   **7.0 A partir daqui, o source é necessário em cada terminal novo que será rodado as funções do ROS**
+   **10. A partir daqui, o source é necessário em cada terminal novo que será rodado as funções do ROS**
       ```bash
       ~$ cd catkin_ws
       ~$ source devel/setup.bash
       ```      
-   8. Rodar no ROS (com rs_camera.launch)
+   11. Rodar no ROS (com rs_camera.launch)
       - Inicie o ROS core:
       ```bash
       ~$ roscore
@@ -218,7 +237,7 @@ Para controlar o robô via joystick serial é necessário criar um novo nó. Sig
       ```      
       **- Isso inicia os tópicos com vídeo, profundidade, infravermelho, etc.**
    
-   9. Visualizar no rqt_image_view:
+   12. Visualizar no rqt_image_view:
       - Em novo terminal:
       ```bash
       ~$ rqt_image_view
@@ -230,7 +249,7 @@ Para controlar o robô via joystick serial é necessário criar um novo nó. Sig
 
       Existem outras opções de imagens
       
-   9. Visualizar no RViz
+   13. Visualizar no RViz
       - Em novo terminal:
       ```bash
       ~$ rviz
@@ -246,7 +265,7 @@ Para controlar o robô via joystick serial é necessário criar um novo nó. Sig
       
       Você verá a imagem da câmera dentro do RViz.
 
-   10. Como fechar o RViz corretamente
+   14. Como fechar o RViz corretamente
       
       Ao iniciar o RViz duas abas irão se abrir, uma é o ambiente grafico do RViz e a outra é um aviso do fim de suporte do ROS.
       Se você tentar rodar o RViz sem fechar ou dar "ok" nessa aba em alguns casos pode crashar.
