@@ -1,4 +1,4 @@
-# Syncar Robot Simulation Workspace
+# Synkar Robot Simulation Workspace
 
 Este repositório contém o workspace ROS (catkin) para a simulação do Robô Syncar, desenvolvido para o Summer Camp “Robótica Zero to Hero” de 2025.
 
